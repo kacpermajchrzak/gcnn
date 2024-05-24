@@ -1,41 +1,34 @@
-## Studio Porjektowe 2 - [Granulated deep learning and Z-numbers in motion detection and object recognition](https://link.springer.com/article/10.1007/s00521-019-04200-1)
+# Śledzenie obiektów z wykorzystaniem granulacji i głębokich sieci neuronowych
 
-# TODO
+Projekt na przedmiot Studio Projektowe 2 na podstawie publikacji 'Granulated deep learning and Z-numbers in motion detection and object recognition'
 
-Priorytetem jest ogarnięcie jak zrobić sieć GCNN. Generalnie w folderze helpers jest model (SSD trained on COCO) który dobrze radzi sobie z detekcją ale nie da się go uzyc do transfer learningu. w folderze model znajduje się model SSD ale wytrenowany na czyms innym. Da się go wykorzystać do transfer learninu ale mozna tylko dolaczyc warstwy koncowe. Probowalem dolaczyc warstwe na poczatek ale wystepuja takie bledy ze sie poddalem.
+Autorzy: Kacper Majchrzak, Mateusz Mazur
 
-### Brief description of the concept
+## Artykuł bazowy
 
-1. **Granular Computing**:
-    - Granular computing aims to handle complex information by dividing it into smaller, more manageable pieces called “granules.”
-    - In this context, granules represent regions of interest within an image or scene.
-2. **Z-numbers**:
-    - Z-numbers are used to quantify the abstraction of semantic information.
-    - They provide a way to express certainty or subjectivity in interpreting a scene.
-    - By using Z-numbers, we can describe objects in a more natural and nuanced manner.
-3. **Integration of Deep Learning and Granular Computing**:
-    - Deep learning is computationally intensive, while granular computing offers computational gains.
-    - The article proposes a methodology that combines the strengths of both approaches.
-    - Instead of scanning the entire image pixel by pixel during deep learning, only representative pixels of each granule are scanned. This significantly speeds up computation time.
-4. **Object Recognition and Scene Understanding**:
-    - The system developed in the article recognizes both static objects in the background and moving objects in the foreground.
-    - Rough set theoretic granular computing is used to define object and background models.
-    - The method of tracking efficiently handles challenging cases, such as partially overlapped objects and sudden appearances.
-5. **Linguistic Description of Scenes**:
-    - The unique aspect lies in using Z-numbers to provide a granulated linguistic description of a scene.
-    - This approach offers a more natural interpretation of object recognition, considering certainty and subjectivity.
+[Granulated deep learning and Z-numbers in motion detection and object recognition](https://link.springer.com/article/10.1007/s00521-019-04200-1)
 
-### Problems:
+W artykule poruszono problematykę detekcji ruchu, rozpoznawania obiektów i opisu scen z wykorzystaniem głębokiego uczenia się w kontekście obliczeń granularnych. Ponieważ głębokie uczenie jest wymagające obliczeniowo, autorzy proponują zastosowanie obliczeń granularnych w celu zredukowania wymagań obliczeniowych.
 
-- Calculation of T:
-  
-   - [**paper**] We made the parameters as adaptable as possible. The parameter values are dependent on the nature of the input data. For example, the number of previous frames n is dependent on the speed of the video. It is normally chosen as 7 for the sequences with speed of 15 frames per sec. The object-background threshold value T is initially chosen to be 30 as it was found to be experimentally suitable for most of the datasets. If the set OT = fi , then reduce T by 5.
-   - [**our solution**] We are computing the threshold by obtaining the minimum sum of ROB and RBT in range(30, 70) and step 5.
+## Podsumowanie
 
-- Network appearance
-  
-   - The major difference with that in [13] is that, we implemented it in granulated fashion, where the first convolution layer is granulated (as described before). The input image (granulated) is fed into the granulated convolution layer, followed by max pooling and rectified linear unit (ReLU). Then finally a fully connected layer of the neural network pro- duces the output classification. Use of this network for object recognition and tracking is described in Sect. 3.3 where the granulated convolution layer takes the object model and background model as input.
+Nasze eksperymenty z połączeniem granulacji obrazów i detekcji ruchu przy użyciu głębokiego uczenia nie przyniosły oczekiwanych rezultatów. Przedstawione w analizowanej publikacji podejście, które zakładało zastosowanie granulacji przed lub zamiast warstwy konwolucyjnej w sieci SSD, okazało się problematyczne. Kluczowe wnioski z naszych badań to:
 
-- Calculation of T in the quad tree decomposition:
-  
-   - A threshold T, where T is the average value of the first and third quartile of the image gray level distribution
+- **Problemy z transfer-learningiem**: Sieci SSD wytrenowane na standardowych obrazach nie potrafią efektywnie działać na obrazach granulowanych. Przetrenowanie sieci na granulowanych obrazach wymagałoby znacznych zasobów i czasu, a uzyskane wyniki prawdopodobnie byłyby niezadowalające.
+- **Utrata szczegółowości**: Granulacja powoduje utratę istotnych szczegółów na obrazach, co utrudnia naukę i dokładność sieci neuronowych. Przykładem jest niewidoczne oko słonia na granulowanym obrazie.
+- **Problemy z nieregularnymi granulkami**: Nieregularne granulki nie mogą być łatwo przetwarzane przez warstwy konwolucyjne, co ogranicza możliwości optymalizacji obliczeniowej.
+- **Brak różniczkowalności**: Granulacja jest operacją nieliniową i nieróżniczkowalną, co uniemożliwia tworzenie trenowalnych warstw granulacyjnych w sieciach neuronowych.
+
+### Alternatywne podejście
+
+Podjęliśmy próbę zastosowania granulacji do wykrywania ruchu na obrazach w inny sposób. Nasze podejście polegało na:
+
+- Obliczaniu granulacji obecnej i poprzedniej ramki,
+- Porównywaniu granulacji między ramkami w celu wykrycia ruchu,
+- Przekazywaniu wykrytych obszarów ruchu do sieci neuronowej do klasyfikacji obiektów.
+
+To podejście okazało się skuteczniejsze, pozwalając na szybsze przetwarzanie obrazów i zwiększenie dokładności klasyfikacji. Jednak wraz ze wzrostem liczby obiektów na obrazie, wydajność (FPS) spadała, co wynikało z konieczności przetwarzania większej liczby obiektów przez sieć neuronową.
+
+## Wnioski
+
+Granulacja obrazów może być przydatna w procesie detekcji ruchu, jednak nie w formie zaprezentowanej w analizowanej publikacji. Alternatywne podejście, które łączy granulację z wykrywaniem ruchu, a następnie klasyfikacją obiektów, pokazuje pewne korzyści, ale również ujawnia ograniczenia związane z wydajnością przy dużej liczbie obiektów.
