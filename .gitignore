@@ -1,13 +1,4 @@
 .tmp
-model/datasets
-data/video_jp_trim.mov
-data/test.mov
 .DS_Store
 /data/pedestrian
-/pedestrians_trim.mp4
-granulation_qtd.ipynb
-logic.ipynb
-qtd.ipynb
-qtd2.ipynb
-Transform_image_into_quadtree.ipynb
 /data/highway
